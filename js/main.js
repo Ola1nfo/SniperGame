@@ -1,9 +1,10 @@
-let timer = 30;
+let timer = 10;
 let score = 0;
 let interval;
 let isActive = false;
 let timeout;
 let gameHistory = []
+let bestScore = 0
 
 const start = document.getElementById('start');
 const gameContainer = document.getElementById('gameContainer');
@@ -18,7 +19,7 @@ nextLevelButton.addEventListener('click', nextLevel);
 function startGame() {
     isActive = true;
     score = 0;
-    timer = 30;
+    timer = 10;
     start.style.display = 'none';
     document.getElementById('score').style.display = 'inline';
     endText.style.display = 'none';
@@ -34,7 +35,7 @@ function startGame() {
             clearInterval(interval);
             stopCreatingCircles(); 
         }
-        if (timer < 0) {
+        if (timer <= 0) {
             endGame();
         }
     }, 1000);
@@ -123,6 +124,11 @@ function endGame() {
     gameHistory.push(score)
     updateHistory()
 
+    if (score > bestScore) {
+        bestScore = score
+    }
+    bestScoreText.textContent = `Найкращий результат: ${bestScore}`
+
     start.style.display = 'inline';
     document.getElementById('score').style.display = 'none';
     start.addEventListener('click', startGame);
@@ -130,6 +136,9 @@ function endGame() {
 
 function updateHistory() {
     historyContainer.innerHTML = '';
+    const historyTitle = document.createElement('h3');
+    historyTitle.textContent = 'Історія ігор';
+    historyContainer.appendChild(historyTitle);
     gameHistory.forEach((score, index) => {
         const gameRecord = document.createElement('div');
         gameRecord.textContent = `Гра ${index + 1}: ${score} балів`;
