@@ -2,7 +2,7 @@ let timer = 20;
 let score = 0;
 let interval;
 let isActive = false;
-let timeouts = []; // Масив для зберігання таймерів
+let timeouts = [];
 let gameHistory = []
 let bestScore = 0;
 
@@ -65,7 +65,7 @@ function createCircle() {
         createCircle();
     }, 10000);
 
-    timeouts.push(timeout); // Додаємо таймер в масив
+    timeouts.push(timeout); 
 
     circle.addEventListener('click', () => {
         if (isActive) {
@@ -82,8 +82,8 @@ function createCircle() {
 
 function stopCreatingCircles() {
     document.querySelectorAll('.circle').forEach(circle => circle.remove());
-    timeouts.forEach(timeout => clearTimeout(timeout)); // Очищаємо всі таймери
-    timeouts = []; // Очищаємо масив
+    timeouts.forEach(timeout => clearTimeout(timeout)); 
+    timeouts = [];
 }
 
 function nextLevel() {
@@ -173,7 +173,6 @@ function createCircleNextLevel2() {
     gameContainer.appendChild(circle);
 }
 
-
 function endGame() {
     clearInterval(interval);
     clearTimeouts();
@@ -197,7 +196,7 @@ function endGame() {
 }
 
 function clearTimeouts() {
-    timeouts.forEach(timeout => clearTimeout(timeout)); // Очищаємо всі таймери
+    timeouts.forEach(timeout => clearTimeout(timeout));
     timeouts = [];
 }
 

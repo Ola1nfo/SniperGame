@@ -62,8 +62,9 @@ p{
     position: absolute;
     width: 70px;
     height: 70px;
-    background-color: #ccc;
-    border-radius: 50px;
+    background-image: url(../img/baloon.png);
+    background-size: cover;
+    background-position: center; 
 }
 #bestScore{
     color: green;
