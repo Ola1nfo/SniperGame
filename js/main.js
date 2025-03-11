@@ -3,11 +3,14 @@ let score = 0;
 let interval;
 let isActive = false;
 let timeout;
+let gameHistory = []
 
 const start = document.getElementById('start');
 const gameContainer = document.getElementById('gameContainer');
 const nextLevelButton = document.getElementById('nextLevelButton');
 const endText = document.getElementById('endText');
+const bestScoreText = document.getElementById('bestScore');
+const historyContainer = document.getElementById('history');
 
 start.addEventListener('click', startGame);
 nextLevelButton.addEventListener('click', nextLevel);
@@ -15,7 +18,7 @@ nextLevelButton.addEventListener('click', nextLevel);
 function startGame() {
     isActive = true;
     score = 0;
-    timer = 30;  // Таймер починається з 30 секунд при старті гри
+    timer = 30;
     start.style.display = 'none';
     document.getElementById('score').style.display = 'inline';
     endText.style.display = 'none';
@@ -65,8 +68,6 @@ function createCircle() {
 function nextLevel() {
     isActive = true;
     nextLevelButton.style.display = 'none';
-
-    // Продовжуємо таймер з того місця, де він зупинився
     interval = setInterval(() => {
         if (timer > 0) {
             timer--;
@@ -119,8 +120,19 @@ function endGame() {
     endText.textContent = `Гра завершена. Ваш рахунок: ${score}`;
     endText.style.display = 'inline'; 
 
-    start.style.display = 'inline';
+    gameHistory.push(score)
+    updateHistory()
 
+    start.style.display = 'inline';
     document.getElementById('score').style.display = 'none';
     start.addEventListener('click', startGame);
+}
+
+function updateHistory() {
+    historyContainer.innerHTML = '';
+    gameHistory.forEach((score, index) => {
+        const gameRecord = document.createElement('div');
+        gameRecord.textContent = `Гра ${index + 1}: ${score} балів`;
+        historyContainer.appendChild(gameRecord);
+    });
 }
