@@ -1,4 +1,4 @@
-let timer = 20;
+let timer = 30;
 let score = 0;
 let interval;
 let isActive = false;
@@ -10,6 +10,7 @@ const start = document.getElementById('start');
 const gameContainer = document.getElementById('gameContainer');
 const nextLevelButton = document.getElementById('nextLevelButton');
 const nextLevel2Button = document.getElementById('nextLevel2Button');
+const nextLevel3Button = document.getElementById('nextLevel3Button');
 const endText = document.getElementById('endText');
 const bestScoreText = document.getElementById('bestScore');
 const historyContainer = document.getElementById('history');
@@ -17,11 +18,12 @@ const historyContainer = document.getElementById('history');
 start.addEventListener('click', startGame);
 nextLevelButton.addEventListener('click', nextLevel);
 nextLevel2Button.addEventListener('click', nextLevel2);
+nextLevel3Button.addEventListener('click', nextLevel3);
 
 function startGame() {
     isActive = true;
     score = 0;
-    timer = 20;
+    timer = 30;
     start.style.display = 'none';
     document.getElementById('score').style.display = 'inline';
     endText.style.display = 'none';
@@ -45,7 +47,11 @@ function startGame() {
             nextLevel2Button.style.display = 'inline';
             stopCreatingCircles();
         }
-
+        if (score === 15) {
+            clearInterval(interval);
+            nextLevel3Button.style.display = 'inline';
+            stopCreatingCircles();
+        }
         if (timer <= 0) {
             endGame();
         }
@@ -54,7 +60,7 @@ function startGame() {
 }
 
 function createCircle() {
-    if (score === 5 || score === 10) return;
+    if (score === 5 || score === 10 || score === 15) return;
     const circle = document.createElement('div');
     circle.className = 'circle';
     circle.style.top = `${Math.floor(Math.random() * (gameContainer.clientHeight - 70))}px`;
@@ -63,7 +69,7 @@ function createCircle() {
     let timeout = setTimeout(() => {
         circle.remove();
         createCircle();
-    }, 10000);
+    }, 1000);
 
     timeouts.push(timeout); 
 
@@ -113,11 +119,31 @@ function nextLevel2() {
         if (timer > 0) {
             timer--;
             document.getElementById('timer').textContent = `Таймер: ${timer}`;
-        } else {
+        } 
+        if (score === 15) {
+            clearInterval(interval);
+            nextLevel3Button.style.display = 'inline';
+            stopCreatingCircles();
+        } 
+        else if (timer <= 0) {
             endGame();
         }
     }, 1000);
     createCircleNextLevel2();
+}
+
+function nextLevel3() {
+    isActive = true;
+    nextLevel3Button.style.display = 'none';
+    interval = setInterval(() => {
+        if (timer > 0) {
+            timer--;
+            document.getElementById('timer').textContent = `Таймер: ${timer}`;
+        } else {
+            endGame();
+        }
+    }, 1000);
+    createCircleNextLevel3();
 }
 
 function createCircleNextLevel() {
@@ -156,7 +182,7 @@ function createCircleNextLevel2() {
     let timeout = setTimeout(() => {
         circle.remove();
         createCircleNextLevel2();
-    }, 10000);
+    }, 1000);
 
     timeouts.push(timeout);
     circle.addEventListener('contextmenu', (event) => {
@@ -172,6 +198,49 @@ function createCircleNextLevel2() {
 
     gameContainer.appendChild(circle);
 }
+
+function createCircleNextLevel3() {
+    const circle = document.createElement('div');
+    circle.className = 'circle';
+    circle.style.top = `${Math.floor(Math.random() * (gameContainer.clientHeight - 70))}px`;
+    circle.style.left = `${Math.floor(Math.random() * (gameContainer.clientWidth - 70))}px`;
+
+    let timeout = setTimeout(() => {
+        circle.remove();
+        createCircleNextLevel3();
+    }, 1000);
+
+    timeouts.push(timeout);
+    let clickCount = 0;
+    let clickTimer;
+
+    circle.addEventListener("mousedown", (event) => {
+        if (event.button === 2) { // Правий клік
+            event.preventDefault(); // Блокуємо контекстне меню
+            clickCount++;
+
+            if (clickCount === 1) {
+                clickTimer = setTimeout(() => {
+                    clickCount = 0;
+                }, 300); // Таймер для очікування другого кліку
+            } else if (clickCount === 2) {
+                clearTimeout(clickTimer);
+                if (isActive) {
+                    score++;
+                    document.getElementById('score').textContent = `Рахунок: ${score}`;
+                    circle.remove();
+                    clearTimeout(timeout);
+                    createCircleNextLevel3();
+                }
+                clickCount = 0;
+            }
+        }
+    });
+
+    gameContainer.appendChild(circle);
+}
+
+document.addEventListener("contextmenu", (event) => event.preventDefault());
 
 function endGame() {
     clearInterval(interval);
